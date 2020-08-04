@@ -97,9 +97,9 @@ function redoMove({ nextInfos }: MovedResult, editor: Editor) {
   editor.moves(nextInfos, true);
 }
 
-const range = { padding: 100, width: 2560, height: 1600 };
-const rangeX = [-range.padding, range.width / 2 + range.padding],
-  rangeY = [-range.padding, range.height / 2 + range.padding];
+const range = { padding: 100, width: 1920, height: 1200 };
+const rangeX = [-range.padding, range.width / 3 + range.padding],
+  rangeY = [-range.padding, range.height / 3 + range.padding];
 
 export interface IEditorProps {
   width: number;
@@ -122,8 +122,8 @@ class Editor extends React.PureComponent<
   Partial<ScenaEditorState>
 > {
   public static defaultProps = {
-    width: 1680,
-    height: 1050,
+    width: 1920,
+    height: 1080,
   };
   public state: ScenaEditorState = {
     selectedTargets: [],
@@ -230,9 +230,9 @@ class Editor extends React.PureComponent<
           className={prefix("viewer")}
           usePinch={true}
           pinchThreshold={50}
-          zoom={zoom}
+          zoom={zoom} 
           rangeX={rangeX}
-          rangeY={rangeY} 
+          rangeY={rangeY}
           onAbortPinch={(e) => {
             selecto.current!.triggerDragStart(e.inputEvent);
           }}
@@ -249,7 +249,6 @@ class Editor extends React.PureComponent<
             this.setState({
               canvas: { x, y },
             });
-            console.log(x,y)
 
             !x && horizontalGuides.current!.scroll(e.scrollLeft);
             horizontalGuides.current!.scrollGuides(e.scrollTop);
@@ -268,6 +267,9 @@ class Editor extends React.PureComponent<
             style={{
               width: `${width}px`,
               height: `${height}px`,
+              position: "absolute",
+              left: 100,
+              top: 100,
             }}
           >
             <MoveableManager
@@ -296,7 +298,7 @@ class Editor extends React.PureComponent<
                   threshold: 30,
                   throttleTime: 30,
                   getScrollPosition: () => {
-                    const current = infiniteViewer.current!; 
+                    const current = infiniteViewer.current!;
                     return [current.getScrollLeft(), current.getScrollTop()];
                   },
                 }
@@ -322,12 +324,11 @@ class Editor extends React.PureComponent<
               e.stop();
             }
           }}
-          
           onDrag={(e: { deltaX: number; deltaY: number }) => {
             if (selectedMenu === "MoveTool") {
               return;
             }
-            let { x, y } = this.state.canvas; 
+            let { x, y } = this.state.canvas;
             infiniteViewer.current!.scrollBy(
               x === 0 || x * e.deltaX > 0 ? -e.deltaX : 0,
               y === 0 || y * e.deltaY > 0 ? -e.deltaY : 0
